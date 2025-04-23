@@ -42,10 +42,6 @@ result = st.selectbox("AQ Score Result (0-1)", list(range(0, 1)))
 # Mappings (must match model training)
 binary_map = {'yes': 1, 'no': 0}
 gender_map = {'m': 1, 'f': 0}
-ethnicity_map = {
-    'White-European': 0, 'Latino': 1, 'Others': 2, 'Black': 3, 'Asian': 4,
-    'Middle Eastern ': 5, 'South Asian': 6, 'Pasifika': 7, 'Hispanic': 8,
-    'Turkish': 9, 'others': 10
 }
 
 # Create raw input dictionary
