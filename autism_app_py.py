@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 import pickle
 
@@ -44,3 +44,4 @@ input_data = pd.DataFrame([[
 if st.button("Predict"):
     prediction = model.predict(input_data)
     st.success("Prediction: **ASD**" if prediction[0] == 1 else "Prediction: **Not ASD**")
+
