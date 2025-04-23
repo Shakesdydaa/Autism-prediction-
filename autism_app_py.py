@@ -10,13 +10,14 @@ Original file is located at
 import streamlit as st
 import pandas as pd
 import pickle
+import numpy as np
 
-# Load the model
+# Load the trained model
 with open('best_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 st.title("Autism Prediction App")
-st.write("Please fill out the screening questions:")
+st.write("Please fill out the screening questions below:")
 
 # Input form
 A1 = st.selectbox("A1 Score", [0, 1])
@@ -35,21 +36,28 @@ jaundice = st.selectbox("Jaundice at birth", ['yes', 'no'])
 austim = st.selectbox("Family History of Autism", ['yes', 'no'])
 used_app_before = st.selectbox("Used App Before?", ['yes', 'no'])
 
-# Map inputs
-gender_map = {'m': 1, 'f': 0}
-binary_map = {'yes': 1, 'no': 0}
+# Encode categorical features
+gender_encoded = 1 if gender == 'm' else 0
+jaundice_encoded = 1 if jaundice == 'yes' else 0
+austim_encoded = 1 if austim == 'yes' else 0
+used_app_encoded = 1 if used_app_before == 'yes' else 0
 
-# Create DataFrame from inputs
+# Create DataFrame in the same order as training data
 input_data = pd.DataFrame([[
     A1, A2, A3, A4, A5, A6, A7, A8, A9, A10,
     age,
-    gender_map[gender],
-    binary_map[jaundice],
-    binary_map[austim],
-    binary_map[used_app_before]
-]])
+    gender_encoded,
+    jaundice_encoded,
+    austim_encoded,
+    used_app_encoded
+]], columns=[
+    'A1_Score', 'A2_Score', 'A3_Score', 'A4_Score', 'A5_Score',
+    'A6_Score', 'A7_Score', 'A8_Score', 'A9_Score', 'A10_Score',
+    'age', 'gender', 'jaundice', 'austim', 'used_app_before'
+])
 
 # Prediction
 if st.button("Predict"):
     prediction = model.predict(input_data)
     st.success("Prediction: **ASD**" if prediction[0] == 1 else "Prediction: **Not ASD**")
+
