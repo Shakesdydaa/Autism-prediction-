@@ -1,31 +1,46 @@
-import streamlit as st
+ import streamlit as st
+import pandas as pd
 import pickle
-import numpy as np
 
-# Load the trained model
-with open("best_model.pkl", "rb") as file:
-    model = pickle.load(file)
+# Load the model
+with open('autism_model.pkl', 'rb') as f:
+    model = pickle.load(f)
 
-# App title
 st.title("Autism Prediction App")
+st.write("Please fill out the screening questions:")
 
-# Input fields — replace/add based on your model's input features
-age = st.slider("Age", 1, 100, 25)
-jaundice = st.selectbox("History of jaundice?", ["Yes", "No"])
-family_history = st.selectbox("Family history of autism?", ["Yes", "No"])
-score = st.slider("Screening Test Score (0-10)", 0, 10, 5)
+# Input form
+A1 = st.selectbox("A1 Score", [0, 1])
+A2 = st.selectbox("A2 Score", [0, 1])
+A3 = st.selectbox("A3 Score", [0, 1])
+A4 = st.selectbox("A4 Score", [0, 1])
+A5 = st.selectbox("A5 Score", [0, 1])
+A6 = st.selectbox("A6 Score", [0, 1])
+A7 = st.selectbox("A7 Score", [0, 1])
+A8 = st.selectbox("A8 Score", [0, 1])
+A9 = st.selectbox("A9 Score", [0, 1])
+A10 = st.selectbox("A10 Score", [0, 1])
+age = st.number_input("Age", min_value=1, max_value=100)
+gender = st.selectbox("Gender", ['m', 'f'])
+jaundice = st.selectbox("Jaundice at birth", ['yes', 'no'])
+austim = st.selectbox("Family History of Autism", ['yes', 'no'])
+used_app_before = st.selectbox("Used App Before?", ['yes', 'no'])
 
-# Map categorical inputs to numerical values
-jaundice_val = 1 if jaundice == "Yes" else 0
-family_history_val = 1 if family_history == "Yes" else 0
+# Map inputs
+gender_map = {'m': 1, 'f': 0}
+binary_map = {'yes': 1, 'no': 0}
 
-# Combine all inputs into a single array
-input_data = np.array([[age, jaundice_val, family_history_val, score]])
+# Create DataFrame from inputs
+input_data = pd.DataFrame([[
+    A1, A2, A3, A4, A5, A6, A7, A8, A9, A10,
+    age,
+    gender_map[gender],
+    binary_map[jaundice],
+    binary_map[austim],
+    binary_map[used_app_before]
+]])
 
 # Prediction
 if st.button("Predict"):
     prediction = model.predict(input_data)
-    if prediction[0] == 1:
-        st.error("Prediction: At Risk of Autism")
-    else:
-        st.success("Prediction: Not At Risk of Autism")
+    st.success("Prediction: **ASD**" if prediction[0] == 1 else "Prediction: **Not ASD**")
