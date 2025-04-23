@@ -16,7 +16,7 @@ try:
     
     # Drop 'ethnicity' if it's present in the trained model
     if 'ethnicity' in expected_columns:
-        expected_columns.remove('ethnicity')
+        expected_columns.remove('ethnicity','contry_of_res')
 
 except AttributeError:
     st.error("Model is missing 'feature_names_in_'. Make sure it was trained with a DataFrame.")
