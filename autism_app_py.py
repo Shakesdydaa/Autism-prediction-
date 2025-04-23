@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 
 # Load the model
-with open('autism_model.pkl', 'rb') as f:
+with open('best_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 st.title("Autism Prediction App")
