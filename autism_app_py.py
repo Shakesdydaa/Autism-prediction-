@@ -2,18 +2,25 @@ import streamlit as st
 import pandas as pd
 import pickle
 
-# Load model
+# Load the trained model
 try:
     with open('best_model.pkl', 'rb') as f:
         model = pickle.load(f)
 except FileNotFoundError:
-    st.error("Model file not found. Please make sure 'best_model.pkl' is in the same directory.")
+    st.error("Model file not found. Please ensure 'best_model.pkl' is in the same directory.")
+    st.stop()
+
+# Extract expected features from model
+try:
+    expected_columns = list(model.feature_names_in_)
+except AttributeError:
+    st.error("Model is missing 'feature_names_in_'. Make sure it was trained with a DataFrame.")
     st.stop()
 
 st.title("🧠 Autism Prediction App")
-st.write("Answer the following questions to predict the likelihood of Autism Spectrum Disorder (ASD).")
+st.write("Fill in the screening questions to get a prediction.")
 
-# Screening Questions
+# Input values
 A1 = st.selectbox("A1 Score", [0, 1])
 A2 = st.selectbox("A2 Score", [0, 1])
 A3 = st.selectbox("A3 Score", [0, 1])
@@ -29,29 +36,24 @@ age = st.number_input("Age", min_value=1, max_value=100)
 gender = st.selectbox("Gender", ['m', 'f'])
 jaundice = st.selectbox("Jaundice at birth?", ['yes', 'no'])
 austim = st.selectbox("Family history of autism?", ['yes', 'no'])
-used_app_before = st.selectbox("Used this screening app before?", ['yes', 'no'])
+used_app_before = st.selectbox("Used this app before?", ['yes', 'no'])
 
-# NEW REQUIRED FIELDS (based on model)
 ethnicity = st.selectbox("Ethnicity", [
     'White-European', 'Latino', 'Others', 'Black', 'Asian',
-    'Middle Eastern ', 'South Asian', 'Pasifika', 'Hispanic',
-    'Turkish', 'others'
+    'Middle Eastern ', 'South Asian', 'Pasifika', 'Hispanic', 'Turkish', 'others'
 ])
 country = st.selectbox("Country of Residence", [
     'United States', 'Brazil', 'Spain', 'United Kingdom', 'New Zealand',
     'India', 'Australia', 'Canada', 'Ireland', 'Others'
 ])
-relation = st.selectbox("Who is filling this form?", [
+relation = st.selectbox("Relation to individual", [
     'Self', 'Parent', 'Relative', 'Health care professional', 'Others'
 ])
-result = st.selectbox("Screening Score Result (Total AQ Score)", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+result = st.selectbox("AQ Score Result (0-10)", list(range(0, 11)))
 
-# Manual encoding (must match training-time encoding)
+# Mappings (must match model training)
 binary_map = {'yes': 1, 'no': 0}
 gender_map = {'m': 1, 'f': 0}
-relation_map = {
-    'Self': 0, 'Parent': 1, 'Relative': 2, 'Health care professional': 3, 'Others': 4
-}
 ethnicity_map = {
     'White-European': 0, 'Latino': 1, 'Others': 2, 'Black': 3, 'Asian': 4,
     'Middle Eastern ': 5, 'South Asian': 6, 'Pasifika': 7, 'Hispanic': 8,
@@ -61,30 +63,36 @@ country_map = {
     'United States': 0, 'Brazil': 1, 'Spain': 2, 'United Kingdom': 3, 'New Zealand': 4,
     'India': 5, 'Australia': 6, 'Canada': 7, 'Ireland': 8, 'Others': 9
 }
+relation_map = {
+    'Self': 0, 'Parent': 1, 'Relative': 2, 'Health care professional': 3, 'Others': 4
+}
 
-# Create input DataFrame in exact training order
-input_data = pd.DataFrame([[
-    A1, A2, A3, A4, A5, A6, A7, A8, A9, A10,
-    age,
-    gender_map[gender],
-    binary_map[jaundice],
-    binary_map[austim],
-    binary_map[used_app_before],
-    country_map[country],
-    ethnicity_map[ethnicity],
-    relation_map[relation],
-    result
-]], columns=[
-    'A1_Score', 'A2_Score', 'A3_Score', 'A4_Score', 'A5_Score',
-    'A6_Score', 'A7_Score', 'A8_Score', 'A9_Score', 'A10_Score',
-    'age', 'gender', 'jaundice', 'austim', 'used_app_before',
-    'contry_of_res', 'ethnicity', 'relation', 'result'
-])
+# Create raw input dictionary
+raw_input = {
+    'A1_Score': A1, 'A2_Score': A2, 'A3_Score': A3, 'A4_Score': A4, 'A5_Score': A5,
+    'A6_Score': A6, 'A7_Score': A7, 'A8_Score': A8, 'A9_Score': A9, 'A10_Score': A10,
+    'age': age,
+    'gender': gender_map[gender],
+    'jaundice': binary_map[jaundice],
+    'austim': binary_map[austim],
+    'used_app_before': binary_map[used_app_before],
+    'contry_of_res': country_map[country],
+    'ethnicity': ethnicity_map[ethnicity],
+    'relation': relation_map[relation],
+    'result': result
+}
 
-# Prediction
+# Build DataFrame in exact model order
+try:
+    input_data = pd.DataFrame([[raw_input[col] for col in expected_columns]], columns=expected_columns)
+except KeyError as e:
+    st.error(f"Missing expected input column: {e}")
+    st.stop()
+
+# Predict
 if st.button("Predict"):
     try:
         prediction = model.predict(input_data)
         st.success("Prediction: **ASD**" if prediction[0] == 1 else "Prediction: **Not ASD**")
-    except ValueError as e:
-        st.error(f"Prediction failed due to input mismatch: {e}")
+    except Exception as e:
+        st.error(f"Prediction failed: {e}")
