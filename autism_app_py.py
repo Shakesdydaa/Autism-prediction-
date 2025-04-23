@@ -36,7 +36,7 @@ age = st.number_input("Age", min_value=1, max_value=100)
 gender = st.selectbox("Gender", ['m', 'f'])
 jaundice = st.selectbox("Jaundice at birth?", ['yes', 'no'])
 austim = st.selectbox("Family history of autism?", ['yes', 'no'])
-"used_app_before = st.selectbox("Used this app before?", ['yes', 'no'])
+'''used_app_before = st.selectbox("Used this app before?", ['yes', 'no'])
 
 ethnicity = st.selectbox("Ethnicity", [
     'White-European', 'Latino', 'Others', 'Black', 'Asian',
@@ -48,7 +48,7 @@ country = st.selectbox("Country of Residence", [
 ])
 relation = st.selectbox("Relation to individual", [
     'Self', 'Parent', 'Relative', 'Health care professional', 'Others'
-])"
+])'''
 result = st.selectbox("AQ Score Result (0-1)", list(range(0, 1)))
 
 # Mappings (must match model training)
