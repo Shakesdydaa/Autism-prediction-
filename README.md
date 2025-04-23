@@ -157,3 +157,4 @@ Used SMOTE to synthetically generate minority class samples, resulting in a bala
 ## 9. Conclusion
 
 Random Forest was selected due to its high predictive accuracy and balanced performance. It offers potential for supporting early ASD screening in primary care settings.
+Powerpoint slide [here](https://docs.google.com/presentation/d/1qHeNVoF_cdJFM7lFXBpnkYEDhKMU7VW6/edit?usp=sharing&ouid=100324326573946905799&rtpof=true&sd=true)
