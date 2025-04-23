@@ -22,6 +22,7 @@ except AttributeError:
     st.error("Model is missing 'feature_names_in_'. Make sure it was trained with a DataFrame.")
     st.stop()
 
+
 st.title("🧠 Autism Prediction App")
 st.write("Fill in the screening questions to get a prediction.")
 
