@@ -36,19 +36,7 @@ age = st.number_input("Age", min_value=1, max_value=100)
 gender = st.selectbox("Gender", ['m', 'f'])
 jaundice = st.selectbox("Jaundice at birth?", ['yes', 'no'])
 austim = st.selectbox("Family history of autism?", ['yes', 'no'])
-'''used_app_before = st.selectbox("Used this app before?", ['yes', 'no'])
 
-ethnicity = st.selectbox("Ethnicity", [
-    'White-European', 'Latino', 'Others', 'Black', 'Asian',
-    'Middle Eastern ', 'South Asian', 'Pasifika', 'Hispanic', 'Turkish', 'others'
-])
-country = st.selectbox("Country of Residence", [
-    'United States', 'Brazil', 'Spain', 'United Kingdom', 'New Zealand',
-    'India', 'Australia', 'Canada', 'Ireland', 'Others'
-])
-relation = st.selectbox("Relation to individual", [
-    'Self', 'Parent', 'Relative', 'Health care professional', 'Others'
-])'''
 result = st.selectbox("AQ Score Result (0-1)", list(range(0, 1)))
 
 # Mappings (must match model training)
@@ -59,13 +47,6 @@ ethnicity_map = {
     'Middle Eastern ': 5, 'South Asian': 6, 'Pasifika': 7, 'Hispanic': 8,
     'Turkish': 9, 'others': 10
 }
-country_map = {
-    'United States': 0, 'Brazil': 1, 'Spain': 2, 'United Kingdom': 3, 'New Zealand': 4,
-    'India': 5, 'Australia': 6, 'Canada': 7, 'Ireland': 8, 'Others': 9
-}
-relation_map = {
-    'Self': 0, 'Parent': 1, 'Relative': 2, 'Health care professional': 3, 'Others': 4
-}
 
 # Create raw input dictionary
 raw_input = {
@@ -75,10 +56,6 @@ raw_input = {
     'gender': gender_map[gender],
     'jaundice': binary_map[jaundice],
     'austim': binary_map[austim],
-    'used_app_before': binary_map[used_app_before],
-    'contry_of_res': country_map[country],
-    'ethnicity': ethnicity_map[ethnicity],
-    'relation': relation_map[relation],
     'result': result
 }
 
