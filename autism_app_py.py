@@ -13,6 +13,11 @@ except FileNotFoundError:
 # Extract expected features from model
 try:
     expected_columns = list(model.feature_names_in_)
+    
+    # Drop 'ethnicity' if it's present in the trained model
+    if 'ethnicity' in expected_columns:
+        expected_columns.remove('ethnicity')
+
 except AttributeError:
     st.error("Model is missing 'feature_names_in_'. Make sure it was trained with a DataFrame.")
     st.stop()
