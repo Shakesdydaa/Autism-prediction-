@@ -15,9 +15,8 @@ try:
     expected_columns = list(model.feature_names_in_)
     
     # Drop 'ethnicity' and 'country_of_res' if they are present in the trained model
-    for feature in ['ethnicity', 'country_of_res']:
-        if feature in expected_columns:
-            expected_columns.remove(feature)
+    features_to_remove = ['ethnicity', 'country_of_res']
+    expected_columns = [feature for feature in expected_columns if feature not in features_to_remove]
 
 except AttributeError:
     st.error("Model is missing 'feature_names_in_'. Make sure it was trained with a DataFrame.")
